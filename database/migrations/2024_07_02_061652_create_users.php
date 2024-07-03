@@ -23,7 +23,16 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->unique();
-            $table->integer('role_id')->references('id')->on('role')->onDelete('cascade');
+            $table->integer('role_id')->references('id')->on('roles')->onDelete('cascade');
+            $table->timestamp('online_at')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('access_tokens', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->integer('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->text('token');
+            $table->timestamp('expired_at');
             $table->timestamps();
         });
 
@@ -45,6 +54,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('role');
         Schema::dropIfExists('users');
+        Schema::dropIfExists('access_tokens');
         Schema::dropIfExists('profile');
     }
 };

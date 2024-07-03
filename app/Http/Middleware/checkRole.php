@@ -4,17 +4,32 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 class checkRole
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
-        return $next($request);
+        $auth = session()->all();
+
+        if (isset($auth['authorization'])) {
+
+            if ($request->is('admin*')) {
+                if ($auth['role_name'] == 'Admin' || $auth['role_name'] == 'Owner') {
+                    return $next($request);
+                } else {
+                    abort(404);
+                }
+            } else {
+                return $next($request);
+            }
+        }
     }
 }

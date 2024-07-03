@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Repositories\Auth\AuthRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -11,51 +12,33 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function showSignIn()
+    protected $authRepository;
+    public function __construct(AuthRepository $authRepository)
     {
-        return view('signin');
+        $this->authRepository = $authRepository;
+    }
+    public function showLogIn()
+    {
+        return view('login');
     }
 
-    public function showSignUp()
+    public function showRegister()
     {
-        return view('signup');
+        return view('register');
     }
 
-    public function doSignIn(Request $request)
+    public function doLogIn(Request $request)
     {
-        $credentials = $request->only('username', 'password');
-
-        if (Auth::attempt($credentials)) {
-            return redirect()->intended('/');
-        } else {
-            return redirect()->intended('auth/signin')
-                ->withErrors(['login' => 'Invalid username or password']);
-        }
+        return $this->authRepository->login($request);
     }
 
-    public function doSignOut()
+    public function doLogOut()
     {
-        Auth::logout();
-        Session::flush();
-        return redirect()->intended('auth/signin');
+        return $this->authRepository->logout();
     }
 
-    public function doSignUp (Request $request)
+    public function doRegister (Request $request)
     {
-        $request->validate([
-            'username' => 'required|unique:users',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
-        ]);
-
-        // Create a new user
-        User::create([
-            'username' => $request->input('username'),
-            'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password')),
-        ]);
-
-        // Redirect to a success page or login page
-        return redirect()->route('/auth/signin')->with('success', 'Account created successfully!');
+        return $this->authRepository->register($request);
     }
 }
