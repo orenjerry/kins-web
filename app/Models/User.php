@@ -15,7 +15,8 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'password',
         'role_id',
-        'online_at',
+        'first_online_at',
+        'last_online_at',
     ];
 
     protected $hidden = [
@@ -41,11 +42,6 @@ class User extends Authenticatable implements JWTSubject
     public function role()
     {
         return $this->belongsTo(Role::class);
-    }
-
-    public function accessTokens()
-    {
-        return $this->hasMany(AccessToken::class);
     }
 
     public function profile()
