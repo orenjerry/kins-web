@@ -3,7 +3,6 @@
 namespace App\Repositories\Auth;
 
 use App\Http\Response\ResponseArray;
-use App\Models\AccessToken;
 use App\Models\Role;
 use LaravelEasyRepository\Implementations\Eloquent;
 use App\Models\User;
@@ -52,14 +51,13 @@ class AuthRepositoryImplement extends Eloquent implements AuthRepository
                     $online->first_online_at = date('Y-m-d H:i:s');
                 }
                 $online->last_online_at = date('Y-m-d H:i:s');
+                $online->save();
             }
 
             session([
                 'user_id' => $user->id,
                 'username' => $user->username,
                 'email' => $user->email,
-                'role_id' => $role->id,
-                'role_name' => $role->name,
             ]);
 
             Cookie::queue(Cookie::make('user_id', $user->id, 125));
@@ -76,18 +74,16 @@ class AuthRepositoryImplement extends Eloquent implements AuthRepository
 
     public function logout()
     {
-        $auth = session()->get('authorization');
+        $auth = session()->all();
 
-        if ($auth && isset($auth['token'])) {
-            $token = $auth['token'];
-
+        if ($auth) {
             Cookie::queue(Cookie::forget('user_id'));
 
             $userId = session('user_id');
             if ($userId) {
                 $online = User::find($userId);
                 if ($online) {
-                    $online->online_at = null;
+                    $online->last_online_at = null;
                     $online->save();
                 }
             }
@@ -103,11 +99,24 @@ class AuthRepositoryImplement extends Eloquent implements AuthRepository
     public function register(Request $request)
     {
         $request->validate([
-            'username' => 'required|unique:users',
-            'email' => 'required|email|unique:users',
+            'username' => 'required',
+            'email' => 'required|email',
             'password' => 'required|min:6',
         ]);
 
+        // Check if username already exists
+        $checkUsn = User::where('username', $request->input('username'))->first();
+        if ($checkUsn) {
+            return $this->response->returnArray(500, 'Username already exists', []);
+        }
+
+        // Check if email already exists
+        $checkEmail = User::where('email', $request->input('email'))->first();
+        if ($checkEmail) {
+            return $this->response->returnArray(500, 'Email already exists', []);
+        }
+
+        // Create the user
         User::create([
             'username' => $request->input('username'),
             'email' => $request->input('email'),

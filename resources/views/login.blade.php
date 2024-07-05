@@ -76,6 +76,7 @@
                             }, 500);
                         }
                     }).fail(function(error) {
+                        console.log(error);
                         notification(error.statusText, error.status);
                     });
                 } else {
