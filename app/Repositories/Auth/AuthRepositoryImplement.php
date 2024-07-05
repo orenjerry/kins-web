@@ -118,12 +118,16 @@ class AuthRepositoryImplement extends Eloquent implements AuthRepository
 
         // Create the user
         User::create([
-            'username' => $request->input('username'),
+            'username' => strtolower($request->input('username')),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
             'role_id' => 3,
         ]);
+        session()->flash('message', 'Account created successfully!');
 
-        return redirect('/auth/login')->with('message', 'Account created successfully!');
+        return response()->json([
+            'status' => 201,
+            'redirect_url' => url('/auth/login')
+        ]);
     }
 }

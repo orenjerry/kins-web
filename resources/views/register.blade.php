@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up | Kins Web</title>
-    <!-- Include your CSS stylesheets here -->
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 </head>
@@ -23,7 +22,8 @@
                 @csrf
                 <div class="mb-4">
                     <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                    <input type="text" id="username" name="username" class="mt-1 p-2 w-full border rounded" required>
+                    <input type="text" id="username" name="username" class="mt-1 p-2 w-full border rounded"
+                        required>
                 </div>
                 <div class="mb-4">
                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
@@ -31,7 +31,8 @@
                 </div>
                 <div class="mb-4">
                     <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="password" name="password" class="mt-1 p-2 w-full border rounded" required>
+                    <input type="password" id="password" name="password" class="mt-1 p-2 w-full border rounded"
+                        required>
                 </div>
                 <div class="mb-4">
                     <h3 class="block text-sm font-medium text-gray-700">Already have an account? <a href="/auth/login"
@@ -55,7 +56,7 @@
         }
 
         $('#form-register').submit(function(e) {
-            e.preventDefault(); // Prevent the default form submission
+            e.preventDefault();
 
             var form = $('#form-register')[0];
             if (form.checkValidity()) {
@@ -65,18 +66,14 @@
                     dataType: "json",
                     data: $('#form-register').serializeArray()
                 }).done(function(response) {
-                    notification(response.message, response.status);
-
                     if (response.status == 200 || response.status == 201) {
                         setTimeout(() => {
-                            window.location.href = '{{ url('/auth/login') }}';
+                            window.location.href = response.redirect_url;
                         }, 500);
                     }
                 }).fail(function(error) {
                     notification(error.message, error.status);
                 });
-            } else {
-                // Optionally, you can display a message to the user that the form is not valid
             }
         });
     </script>
