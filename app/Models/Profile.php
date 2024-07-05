@@ -13,6 +13,7 @@ class Profile extends Model
         'id_user',
         'name',
         'photo',
+        'banner',
         'about',
         'pronouns',
     ];

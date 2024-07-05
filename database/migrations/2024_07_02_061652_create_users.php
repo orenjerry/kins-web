@@ -11,12 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name');
-            $table->timestamps();
-        });
-
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('username')->unique();
@@ -28,24 +22,6 @@ return new class extends Migration
             $table->timestamp('last_online_at')->nullable();
             $table->timestamps();
         });
-
-//        Schema::create('access_tokens', function (Blueprint $table) {
-//            $table->bigIncrements('id');
-//            $table->integer('user_id')->references('id')->on('users')->onDelete('cascade');
-//            $table->text('token');
-//            $table->timestamp('expired_at');
-//            $table->timestamps();
-//        });
-
-        Schema::create('profile', function(Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->integer('id_user')->references('id')->on('users')->onDelete('cascade');
-            $table->string('name');
-            $table->string('photo')->nullable();
-            $table->string('about')->nullable();
-            $table->string('pronouns')->nullable();
-            $table->timestamps();
-        });
     }
 
     /**
@@ -53,9 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('role');
         Schema::dropIfExists('users');
-        Schema::dropIfExists('access_tokens');
-        Schema::dropIfExists('profile');
     }
 };

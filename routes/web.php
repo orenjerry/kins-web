@@ -1,28 +1,44 @@
 <?php
 
+use App\Http\Controllers\Backend\ActivityController;
+use App\Http\Controllers\Backend\AuthController;
+use App\Http\Controllers\Backend\DataController;
+use App\Http\Controllers\Backend\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DataController;
 use App\Http\Controllers\test;
+use App\Http\Middleware\checkProfile;
 use App\Http\Middleware\checkRole;
 use App\Http\Middleware\isLoggedIn;
 
 Route::prefix('/auth')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('Login');
-    Route::post('/login', [AuthController::class, 'doLogin']);
     Route::get('/register', [AuthController::class, 'showRegister'])->name('Register');
+    Route::post('/login', [AuthController::class, 'doLogin']);
     Route::post('/register', [AuthController::class, 'doRegister']);
     Route::get('/logout', [AuthController::class, 'doLogOut']);
 });
 
+Route::prefix('/profile')->group(function () {
+    Route::prefix('/activity')->group(function () {
+        Route::prefix('/last-online')->group(function () {
+            Route::post('/set', [ActivityController::class, 'offline']);
+        });
+    });
+    Route::get('/make-profile', [ProfileController::class, 'viewMakeProfile']);
+});
+
 Route::middleware([isLoggedIn::class])->group(function () {
     Route::middleware([checkRole::class])->group(function () {
-        Route::get('/test', [test::class, 'test']);
-        Route::get('/', function () {
-            return view('welcome');
-        });
-        Route::prefix('/admin')->group(function () {
-            Route::get('/dashboard', [DataController::class, 'view'])->name('dashboard');
+        Route::middleware([checkProfile::class])->group(function () {
+            Route::get('/test', [test::class, 'test']);
+            Route::get('/', function () {
+                return view('welcome');
+            });
+            Route::prefix('/admin')->group(function () {
+                Route::prefix('dashboard')->group(function () {
+                    Route::get('/', [DataController::class, 'view'])->name('dashboard');
+                });
+            });
         });
     });
 });
