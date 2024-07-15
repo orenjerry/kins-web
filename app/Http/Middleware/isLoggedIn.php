@@ -18,8 +18,9 @@ class isLoggedIn
     {
         if (!session()->has('user_id')) {
             return redirect('auth/login');
+        } elseif ($request->is('auth*')) {
+            return redirect()->back();
         }
         return $next($request);
     }
-
 }

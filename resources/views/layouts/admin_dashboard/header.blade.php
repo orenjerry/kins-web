@@ -82,7 +82,7 @@
         <div x-data="{ dropdownOpen: false }" class="relative">
             <button @click="dropdownOpen = ! dropdownOpen"
                 class="relative flex items-center w-8 h-8 overflow-hidden rounded-full shadow focus:outline-none">
-                <img class="object-cover w-full h-full" src="{{ asset('images/profile/kins-pfp.jpg') }}"
+                <img class="object-cover w-full h-full" src="{{ asset('images/profile/default/kins-pfp.jpg') }}"
                     alt="Your avatar">
                 <span class="ml-2 text-gray-700">Kinnaa</span>
                 <svg class="w-4 h-4 ml-2 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none"

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\Backend\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Auth\AuthRepository;
@@ -15,12 +15,12 @@ class AuthController extends Controller
     }
     public function showLogIn()
     {
-        return view('login');
+        return view('content.auth.login');
     }
 
     public function showRegister()
     {
-        return view('register');
+        return view('content.auth.register');
     }
 
     public function doLogIn(Request $request)

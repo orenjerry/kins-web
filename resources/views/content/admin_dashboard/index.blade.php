@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.admin_dashboard.master')
 
 @section('body')
     <h3 class="text-gray-700 text-3xl font-medium">Dashboard</h3>

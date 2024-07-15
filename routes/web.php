@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\Backend\ActivityController;
-use App\Http\Controllers\Backend\AuthController;
-use App\Http\Controllers\Backend\DataController;
-use App\Http\Controllers\Backend\ProfileController;
+use App\Http\Controllers\Backend\Admin_Dashboard\DataController;
+use App\Http\Controllers\Backend\Auth\AuthController;
+use App\Http\Controllers\Backend\Profile\ActivityController;
+use App\Http\Controllers\Backend\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\test;
 use App\Http\Middleware\checkProfile;
@@ -11,10 +11,12 @@ use App\Http\Middleware\checkRole;
 use App\Http\Middleware\isLoggedIn;
 
 Route::prefix('/auth')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('Login');
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('Register');
-    Route::post('/login', [AuthController::class, 'doLogin']);
-    Route::post('/register', [AuthController::class, 'doRegister']);
+    Route::middleware([isLoggedIn::class])->group(function () {
+        Route::get('/login', [AuthController::class, 'showLogin'])->name('Login');
+        Route::get('/register', [AuthController::class, 'showRegister'])->name('Register');
+        Route::post('/login', [AuthController::class, 'doLogin']);
+        Route::post('/register', [AuthController::class, 'doRegister']);
+    });
     Route::get('/logout', [AuthController::class, 'doLogOut']);
 });
 
@@ -25,6 +27,7 @@ Route::prefix('/profile')->group(function () {
         });
     });
     Route::get('/make-profile', [ProfileController::class, 'viewMakeProfile']);
+    Route::post('/make-profile', [ProfileController::class, 'makeProfile']);
 });
 
 Route::middleware([isLoggedIn::class])->group(function () {
